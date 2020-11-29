@@ -19,7 +19,7 @@ Want to do the following over MQTT:
 | Topic | Payload | Description |
 | ----- | ------- | ----------- |
 | pts1/step_size | (number) | One of SINGLE, DOUBLE, INTERLEAVED, or MICROSTEP |
-| pts/step_delay | (number) | ms delay between steps.  Defaults to zero.  |
+| pts1/step_delay | (number) | ms delay between steps.  Defaults to zero.  |
 | pts1/pan/cw | int: num steps | Moves... |
 | pts1/pan/ccw | int num steps | moves... |
 | pts1/tilt/up | | |
@@ -29,7 +29,15 @@ Want to do the following over MQTT:
 
 
 ## Pi stepper driver
-coming next...
+"motion" object type (use one for pan and one for tilt).
+  contains step size
+  contains ...
+Main loop driver keeps track of which motion(s) are active, how many steps we need to take in each motion, and timestamp for the next step.
+
+If it's time to take a step, use the driver to "onestep()" it.
+
+MQTT callback sets:
+* 
 
 ## TK interface
 coming later...
