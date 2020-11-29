@@ -16,7 +16,17 @@ Want to do the following over MQTT:
 * python TK app to act as UI.
 
 ## MQTT Interface
-coming first...
+| Topic | Payload | Description |
+| ----- | ------- | ----------- |
+| pts1/step_size | (number) | One of SINGLE, DOUBLE, INTERLEAVED, or MICROSTEP |
+| pts/step_delay | (number) | ms delay between steps.  Defaults to zero.  |
+| pts1/pan/cw | int: num steps | Moves... |
+| pts1/pan/ccw | int num steps | moves... |
+| pts1/tilt/up | | |
+| pts1/tilt/down | | |
+| pts1/stop | none | stops any in motion progress |
+| pts1/release | none | stops any motion and releases stepper coils |
+
 
 ## Pi stepper driver
 coming next...
