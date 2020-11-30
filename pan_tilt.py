@@ -7,11 +7,54 @@ from adafruit_motor import stepper
 
 # Callback for message
 def on_message(client, userdata, message):
+  global pan_stepper;
+  global tilt_stepper;
 
   print("message received: ", str(message.payload.decode("utf-8")))
   print("message topic=", message.topic)
   print("message qos=", message.qos)
   print("message retain flag=", message.retain)
+
+  command_list = message.topic.split("/")
+
+  if (command_list[0] == "pts1/"):
+    print("got pts command")
+
+    if (command_list[1] == "step_size"):
+      pan_stepper.set_step_size(int(message.payload))
+      tilt_stepper.set_step_size(int(message.payload))
+    elif (command_list[1] == "step_delay"):
+      pan_stepper.set_step_delay(int(message.payload))
+      tilt_stepper.set_step_delay(int(message.payload))
+    elif (command_list[1] == "pan"):
+      if (command_list[2] == "cw"):
+        pan_stepper.set_dir(stepper.FORWARD)
+        pan_stepper.start(steps=int(message.payload))
+      elif (command_list[2] == "ccw"):
+        pan_stepper.set_dir(stepper.BACKWARD)
+        pan_stepper.start(steps=int(message.payload))
+      else:
+        print("Unknown dir for pan stepper")
+    elif (command_list[1] == "tilt"):
+      if (command_list[2] == "up"):
+        tilt_stepper.set_dir(stepper.FORWARD)
+        tilt_stepper.start(steps=int(message.payload))
+      elif (command_list[2] == "down"):
+        tilt_stepper.set_dir(stepper.BACKWARD)
+        tilt_stepper.start(steps=int(message.payload))
+      else:
+        print("Unknown dir for tilt stepper")
+    elif (command_list[1] == "stop"):
+      pan_stepper.stop()
+      tilt_stepper.stop()
+    elif (command_list[1] == "release"):
+      pan_stepper.release()
+      tilt_stepper.release()
+    else:
+      print("Unknown pts1 command")
+  else:
+    print("unknown command!!!") 
+
 
 ######################################################
 # StepperMotion object
@@ -107,8 +150,9 @@ try:
 
   kit = MotorKit()
   pan_stepper = StepperMotion(kit.stepper1)
+  tilt_stepper = StepperMotion(kit.stepper2)
   
-  #first test:  no motion.  Nothing below this.  :)
+  #pan_stepper.start(50)
   
   while True:
     pan_stepper.check_for_step()
