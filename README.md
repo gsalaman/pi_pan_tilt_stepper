@@ -28,26 +28,24 @@ Want to do the following over MQTT:
 | pts1/release | none | stops any motion and releases stepper coils |
 
 ## Pi stepper driver
-"pan-tilt" object type contains:
+"StepperMotion" object type contains:
+* a pointer to the stepper driver from the adafruit "MotorKit" object
+* a flag telling whether we are moving or not.
+* Which direction are we going (stepper.FORWARD or stepper.BACKWARD)
 * step size
 * step delay
-* stepper motion sub-objects...one pan, one tilt.
-
-The stepper motion sub-object keeps track of:
-* what is our current motion state (fwd, back, stopped)
-* If we're going either fwd or back:
+* if we're moving:
   * how many steps do we need to take?
   * how many steps have we already taken?
   * when do we need to take our next step?
   
-MQTT callback sets all of these...one global for "pan-tilt".
+MQTT callback sets all of these...one global for pan, one for tilt.
 
 Object has a driver function:
 * what time is it now?
-* if the pan stepper has more to go, is it time for a pan step?  If so, do it.
-* if the tilt stepper has more to go, is it time for a tilt step.  If so, do it.
+* if the stepper has more to go, is it time for a pan step?  If so, do it.
 
-"Main" initializes MQTT, creates our pan-tilt object, then does a try/except loop calling the driver function.  ctl-c exits.
+"Main" initializes MQTT, creates our pan and tilt objects, then does a try/except loop calling the driver function.  ctl-c exits.
 
 ## TK interface
 coming later...will start testing with mqtt_sniffer
