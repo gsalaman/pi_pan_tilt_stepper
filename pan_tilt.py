@@ -17,7 +17,7 @@ def on_message(client, userdata, message):
 
   command_list = message.topic.split("/")
 
-  if (command_list[0] == "pts1/"):
+  if (command_list[0] == "pts1"):
     print("got pts command")
 
     if (command_list[1] == "step_size"):
@@ -28,20 +28,20 @@ def on_message(client, userdata, message):
       tilt_stepper.set_step_delay(int(message.payload))
     elif (command_list[1] == "pan"):
       if (command_list[2] == "cw"):
-        pan_stepper.set_dir(stepper.FORWARD)
-        pan_stepper.start(steps=int(message.payload))
+        pan_stepper.set_direction(stepper.FORWARD)
+        pan_stepper.start(num_steps=int(message.payload))
       elif (command_list[2] == "ccw"):
-        pan_stepper.set_dir(stepper.BACKWARD)
-        pan_stepper.start(steps=int(message.payload))
+        pan_stepper.set_direction(stepper.BACKWARD)
+        pan_stepper.start(num_steps=int(message.payload))
       else:
         print("Unknown dir for pan stepper")
     elif (command_list[1] == "tilt"):
       if (command_list[2] == "up"):
-        tilt_stepper.set_dir(stepper.FORWARD)
-        tilt_stepper.start(steps=int(message.payload))
+        tilt_stepper.set_direction(stepper.FORWARD)
+        tilt_stepper.start(num_steps=int(message.payload))
       elif (command_list[2] == "down"):
-        tilt_stepper.set_dir(stepper.BACKWARD)
-        tilt_stepper.start(steps=int(message.payload))
+        tilt_stepper.set_direction(stepper.BACKWARD)
+        tilt_stepper.start(num_steps=int(message.payload))
       else:
         print("Unknown dir for tilt stepper")
     elif (command_list[1] == "stop"):
@@ -101,7 +101,7 @@ class StepperMotion():
       
           # if we've hit the end of our motion, stop.
           if (self.current_step >= self.max_steps):
-            self.moving = "False"
+            self.moving = False
 
       else:
         # we shouldn't get in here...we were moving, but didn't have
@@ -110,32 +110,34 @@ class StepperMotion():
         print("Stepper driver moving with no more steps!")
         stepper.moving = False
 
-    def set_direction(self, dir):
-      self.dir = dir
+  def set_direction(self, dir):
+    self.dir = dir
   
-    def set_step_size(self, step_size):
-      self.step_size = step_size
+  def set_step_size(self, step_size):
+    self.step_size = step_size
 
-    def set_step_delay(self, delay):
-      self.step_delay = delay
+  def set_step_delay(self, delay):
+    self.step_delay = delay
  
-    def start(self,num_steps=1):
-      self.last_step_time = datetime.now()
-      self.max_steps = num_steps
-      self.current_step = 0
-      # note that this doesn't actually START the motion; it just lets our 
-      # driver function do the proper step if the time is right. 
-      self.moving = True
+  def start(self,num_steps=1):
+    self.last_step_time = datetime.now()
+    self.max_steps = num_steps
+    self.current_step = 0
+
+    # note that this doesn't actually START the motion; it just lets our 
+    # driver function do the proper step if the time is right. 
+    self.moving = True
  
-    def release(self):
-      self.stop()
-      self.stepper_drv.release()
+  def release(self):
+    self.stop()
+    self.stepper_drv.release()
 
 ######################################################
 # Main
 ######################################################
 
 broker_address="10.0.0.46"
+#broker_address="10.25.0.12"
 client = mqtt.Client("pts1_client")
 client.on_message=on_message
 client.connect(broker_address)
@@ -152,7 +154,7 @@ try:
   pan_stepper = StepperMotion(kit.stepper1)
   tilt_stepper = StepperMotion(kit.stepper2)
   
-  #pan_stepper.start(50)
+  pan_stepper.start(num_steps=50)
   
   while True:
     pan_stepper.check_for_step()
