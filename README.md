@@ -1,6 +1,8 @@
 # pi_pan_tilt_stepper
 This repo uses the pi's stepper bonnet to control two stepper motors, via MQTT.
 
+Interface is not fully implemented yet...and it looks like Adafruit's motor-board is touchy wrt motor currents and supply voltages.  This seems to work fine when dealing with a 5v supply and single steps, but that only gives you 1.8 degree resolution.  I'm good with the MQTT commands...further rev of this (new branch?) will do 2 "big easy" drivers from sparkfun instead of the Adafruit board.
+
 ## Requirements
 Want to do the following over MQTT:
 * Step pan cw or ccw a certain number of steps
